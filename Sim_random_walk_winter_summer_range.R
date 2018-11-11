@@ -2,6 +2,7 @@
 require(tidyverse)
 require(MASS)
 require(rgdal)
+setwd('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Animations/')
 lowland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/LR_Lowland.shp')
 highland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/Highland_polygon_final_basedon90UD.shp')
 load('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Data/1km_hexagon.rdata')
