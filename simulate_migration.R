@@ -63,3 +63,8 @@ migration_xysp %>% subset(Poop_event == 1) %>%
 title('Migration')
 return(migration_xysp)
 }
+
+
+#
+migration = simulate_migration(steps.df, highland_UD_shp, lowland_UD_shp, 8)
+#
