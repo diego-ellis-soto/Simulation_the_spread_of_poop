@@ -1,3 +1,8 @@
+library("animation")
+library("tweenr") # applies to both base R and ggplot2
+library("gganimate") # makes 
+library("dplyr")
+library("gapminder") # where our data comes from
 # This script is for animations
 make_plot_all_movement_as_bg <- function(ndays){ # function input takes number from 2 to 8
   
@@ -26,14 +31,14 @@ make_plot_all_movement_as_bg <- function(ndays){ # function input takes number f
 }
 
 ndays = 150
-saveHTML({ # Take all figures out of the loop. and save as html. stirch ogether in html format
-  for (idx in 2:ndays) {
-    make_plot_all_movement_as_bg(idx)
-  }
-},
-img.name = "lowland_migration_all_movements_bg", # I give it a unique name and file
-htmlfile = "lowland_migration_all_movements_bg.html"
-)
+# saveHTML({ # Take all figures out of the loop. and save as html. stirch ogether in html format
+#   for (idx in 2:ndays) {
+#     make_plot_all_movement_as_bg(idx)
+#   }
+# },
+# img.name = "lowland_migration_all_movements_bg", # I give it a unique name and file
+# htmlfile = "lowland_migration_all_movements_bg.html"
+# )
 
 make_plot <- function(ndays){ # function input takes number from 2 to 8
   

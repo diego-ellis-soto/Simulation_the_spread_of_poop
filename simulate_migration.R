@@ -28,9 +28,9 @@ MWN.fit <- with(MWN.sim, estimate_shift(T=MWN.sim$T, X=MWN.sim$X, Y=MWN.sim$Y))
 summary(MWN.fit)
 plot(MWN.fit) # Note that in this visualization, the area circles are (dark to light) the 50% and 95% areas of use, whereas the dark and light blue lines in the time series figure reflect the confidence intervals around the estimated means, which are rather narrow.
 # EXTRACT THE COORDINATES FROM STEP 306 to 321!
-migration = data.frame(nday = MWN.fit$T[57:81], # steps where migration occurs ffrom day 306 to 330
-Longitude = MWN.fit$X[57:81],
-Latitude = MWN.fit$Y[57:81],
+migration = data.frame(nday = MWN.fit$T[57:77], # steps where migration occurs ffrom day 306 to 330
+Longitude = MWN.fit$X[57:77],
+Latitude = MWN.fit$Y[57:77],
 Poop_event = 0,
 NSeeds = 0,
 Nseeds_germinated = 0,
@@ -52,19 +52,31 @@ days_of_poop_event <- seq(
 
 migration[migration$nday %in% days_of_poop_event,]$Poop_event <- 1
 
+
+first_loc = SpatialPoints(migration[1,c('Longitude', 'Latitude')])
+last_loc = sp
+proj4string(first_loc) = proj
+
 proj =   "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
 migration_xysp <- SpatialPointsDataFrame(coords= migration[,c('Longitude', 'Latitude')], data = migration,proj4string = CRS(proj))
 par(mfrow=c(1,1))
 plot(migration_xysp)
 plot(lowland_UD_shp, col = alpha('red', 0.3) , add=T)
 plot(highland_UD_shp, col = alpha('forestgreen',0.3) , add=T)
+points(first_loc, col = 'red', pch = 16)
+points(last_loc, col = 'blue', pch = 16)
 migration_xysp %>% subset(Poop_event == 1) %>%
   points(col = 'brown', pch = 24, bg = alpha('chocolate4', 0.4 ))
 title('Migration')
+
 return(migration_xysp)
 }
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# For lowland: The last point : You can define a start point OR draw from a random point. 
+# Change the functioN: rw_within_homerange: either spsample a random point OR the output of the last point of simulate migration
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 
 #
-migration = simulate_migration(steps.df, highland_UD_shp, lowland_UD_shp, 8)
+# migration = simulate_migration(steps.df, highland_UD_shp, lowland_UD_shp, 8)
 #
