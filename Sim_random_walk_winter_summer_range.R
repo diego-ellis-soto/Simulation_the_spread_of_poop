@@ -1,7 +1,18 @@
+# I could draw number of seeds per dung pile of guava from a normal distribution based on tortoise seed numbers. There are 3 distributions, 1 for highland, 2 for transition zone and 3 for lowlands. 
+
 # https://cran.r-project.org/web/packages/emojifont/vignettes/emojifont.html
 require(tidyverse)
 require(MASS)
 require(rgdal)
+require(marcher)
+require(smoove)
+require(tidyverse)
+require(MASS)
+require(rgdal)
+require(geosphere)
+require(move)
+require(lubridate)
+require(raster)
 setwd('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Animations/')
 lowland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/LR_Lowland.shp')
 highland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/Highland_polygon_final_basedon90UD.shp')
@@ -167,10 +178,6 @@ img.name = "lowland_migration_all_movements_bg", # I give it a unique name and f
 htmlfile = "lowland_migration_all_movements_bg.html"
 )
 
-
-
-
-
 make_plot <- function(ndays){ # function input takes number from 2 to 8
   
   step_A <- steps.df[((1:ndays) -1),] # If I put 10, show me the first 9 points here
@@ -192,8 +199,6 @@ make_plot <- function(ndays){ # function input takes number from 2 to 8
   
   Sys.sleep(.5)
 }
-
-
 
 ndays = 100
 for (idx in 2:ndays) {
@@ -232,8 +237,6 @@ for(idx in 2:ndays) {
   make_plot2(idx)
 }
 
-
-
 saveHTML({
 for (idx in 2:ndays) {
   make_plot2(idx)
@@ -250,7 +253,6 @@ library("tweenr")
 require(emoGG)
 emoji_search("turtle")
 emoji_search("poop")
-
 
 make_plot3_emoji = function(ndays) {
   require(tidyverse)
@@ -281,3 +283,5 @@ loop = TRUE,
 img.name = "sim_ggplot_emoji",
 htmlfile = "sim_ggplot_emoji.html"
 )
+
+# Idea: Using marcher: First point is last poimt of tortoise random walk and endpoint is a random point in the lowland range: 
