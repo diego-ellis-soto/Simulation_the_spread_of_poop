@@ -8,6 +8,8 @@
 # Psidium guajava: Mean fruit weight: 59.8g and mean seeds per fruit 226. 
 # 10 seeds planted per treatment -> 80 % germinate -> 1 out of 1 makes it to shrub.
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# [1] Load packages, data and scripts ####
+setwd('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Animations/')
 source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/Animate_sim.R')
 source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/similate_RW_no_migr_range.R')
 source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/simulate_migration.R')
@@ -21,24 +23,16 @@ require(geosphere)
 require(move)
 require(lubridate)
 require(raster)
-setwd('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Animations/')
 lowland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/LR_Lowland.shp')
 highland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/Highland_polygon_final_basedon90UD.shp')
 load('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Data/1km_hexagon.rdata')
 lowland_UD_shp= spTransform(lowland_UD_shp,   "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs" )
 highland_UD_shp = spTransform(highland_UD_shp, proj4string(lowland_UD_shp))
 range_shp = lowland_UD_shp
-ndays = 150
-daily_distance_moved = 200
-avg_gut_retention_time = 8
-guava_seed_per_dung_pile = 624  # average of 624 guava seeds
+ndays = 150; daily_distance_moved = 200; avg_gut_retention_time = 8; guava_seed_per_dung_pile = 624; germinatioN_success = 0.8;seedling_to_shrub = 1/1000 # one out of every 1000 seedlings becomes a shrub  
 # We could also use the entire seed dataset take the mean and the standard deviation.
 # y <- dnorm(x, mean=10, sd=3)
-  germinatioN_success = 0.8
-  seedling_to_shrub = 1/1000 # one out of every 1000 seedlings becomes a shrub
-# Start at 1, then 9, then 17 ...
-# Every nth event (discrete timestep) a pooping event happens
-# Random walk within winter/summerrange
+  
 # Parameters are 150 days we simulate, move 200 meters per day, simulate the highland range, average gut retention time is 8 days
 steps.df = rw_within_homerange(150, 200, highland_UD_shp, 8)
 # Simulate migration

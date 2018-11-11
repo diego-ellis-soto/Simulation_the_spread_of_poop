@@ -19,15 +19,14 @@ taus <- c(tau.z = 1, tau.v = 0.5)
 lowland_UD_shp$Area_sqm <- area(lowland_UD_shp); area_low = lowland_UD_shp$Area_sqm
 highland_UD_shp$Area_sqm <- area(highland_UD_shp); area_high = highland_UD_shp$Area_sqm
 
-MOUF.sim <- simulate_shift(T = time, tau = c(tau.z = 5, tau.v = 1), mu = Mean, A = highland_UD_shp$Area_sqm) %>% scan_track
+# MOUF.sim <- simulate_shift(T = time, tau = c(tau.z = 5, tau.v = 1), mu = Mean, A = highland_UD_shp$Area_sqm) %>% scan_track
 title("Position and Velocity Autocorrelation: MOUF", outer = TRUE)
 # It is now quick and easy to compare models with more or less position and velocity autocorrelation TAU
 # ESTIMATION RANGE SHIFT
 MWN.sim = simulate_shift(T = time, tau = c(tau.z = 5, tau.v = 1), mu = Mean, A = highland_UD_shp$Area_sqm)
 MWN.fit <- with(MWN.sim, estimate_shift(T=MWN.sim$T, X=MWN.sim$X, Y=MWN.sim$Y))
 summary(MWN.fit)
-plot(MWN.fit) # Note that in this visualization, the area circles are (dark to light) the 50% and 95% areas of use, whereas the dark and light blue lines in the time series figure reflect the confidence intervals around the estimated means, which are rather narrow.
-# EXTRACT THE COORDINATES FROM STEP 306 to 321!
+
 migration = data.frame(nday = MWN.fit$T[57:77], # steps where migration occurs ffrom day 306 to 330
 Longitude = MWN.fit$X[57:77],
 Latitude = MWN.fit$Y[57:77],
@@ -57,9 +56,12 @@ first_loc = SpatialPoints(migration[1,c('Longitude', 'Latitude')])
 last_loc = sp
 proj4string(first_loc) = proj
 
+mi = SpatialPoints(migration_xysp@coords)
+
 proj =   "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
 migration_xysp <- SpatialPointsDataFrame(coords= migration[,c('Longitude', 'Latitude')], data = migration,proj4string = CRS(proj))
 par(mfrow=c(1,1))
+# plot(migration_xysp$Longitude,migration_xysp$Latitude , type = 'l', add=T)
 plot(migration_xysp)
 plot(lowland_UD_shp, col = alpha('red', 0.3) , add=T)
 plot(highland_UD_shp, col = alpha('forestgreen',0.3) , add=T)
@@ -67,7 +69,11 @@ points(first_loc, col = 'red', pch = 16)
 points(last_loc, col = 'blue', pch = 16)
 migration_xysp %>% subset(Poop_event == 1) %>%
   points(col = 'brown', pch = 24, bg = alpha('chocolate4', 0.4 ))
-title('Migration')
+# title('Migration')
+
+plot(MWN.fit) # Note that in this visualization, the area circles are (dark to light) the 50% and 95% areas of use, whereas the dark and light blue lines in the time series figure reflect the confidence intervals around the estimated means, which are rather narrow.
+# EXTRACT THE COORDINATES FROM STEP 306 to 321!
+
 
 return(migration_xysp)
 }

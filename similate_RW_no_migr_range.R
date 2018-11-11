@@ -1,7 +1,18 @@
+# Start at 1, then 9, then 17 ...
+# Every nth event (discrete timestep) a pooping event happens
+# Random walk within winter/summerrange
+# average of 624 guava seeds
 # Simulate random walks  within wintering and breedingg range:
-rw_within_homerange = function(ndays, daily_distance_moved, range_shp, avg_gut_retention_time){
+rw_within_homerange = function(ndays, daily_distance_moved, range_shp, avg_gut_retention_time,
+                               defined_start_point = NULL){
   message('May I suggest setting a seed?')
-  sp =  spsample(range_shp, 1, 'random') # startin point is a random point within the shape (winter and breeding range)
+  
+  if(is.null(defined_start_point)){
+  message('No start point specified \nMaking a random point inside the non migratory range')
+    sp =  spsample(range_shp, 1, 'random') # startin point is a random point within the shape (winter and breeding range)
+  }else{
+    sp = defined_start_point
+  }
   
   days_of_poop_event <- seq(1, daily_distance_moved,
                             avg_gut_retention_time)
@@ -15,7 +26,7 @@ rw_within_homerange = function(ndays, daily_distance_moved, range_shp, avg_gut_r
   
   # Ignacio: How do I add 20 000 individuals on top?
   for(i in 1:ndays){ # i = 1; i =2
-    print(i)
+  #   print(i)
     if(i == 1){
       #  IGNACIO HELP HERE: HOW DO I DO CUMSUM INSIDE A LOOP?
       xy = mvrnorm(1, c(0,0), matrix(c(daily_distance_moved,0,0,daily_distance_moved),2,2))
