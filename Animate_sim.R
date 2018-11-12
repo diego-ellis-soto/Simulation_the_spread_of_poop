@@ -6,12 +6,12 @@ library("gapminder") # where our data comes from
 # This script is for animations
 make_plot_all_movement_as_bg <- function(ndays){ # function input takes number from 2 to 8
   
-  
+  step_A <- steps.df[((1:ndays) -1),] # If I put 10, show me the first 9 points here
+  step_B<- steps.df[((ndays) -1),] # The last point that will be input. zB if i input ndays 10 its the 10th day
   plot(x = steps.df$Longitude,y = steps.df$Latitude, type = "l",col = alpha("#A50026", .3),
        xlim = c(min(step_A$Longitude), max(step_A$Longitude)), ylim = c(min(step_A$Latitude), max(step_A$Latitude)))
   
-  step_A <- steps.df[((1:ndays) -1),] # If I put 10, show me the first 9 points here
-  step_B<- steps.df[((ndays) -1),] # The last point that will be input. zB if i input ndays 10 its the 10th day
+  
   # plot(x = step_A$Longitude,y = step_A$Latitude, type = "l",col = alpha("#A50026", .3),
   #      xlim = c(min(step_A$Longitude), max(step_A$Longitude)), ylim = c(min(step_A$Latitude), max(step_A$Latitude)))
   # rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "lightgreen")

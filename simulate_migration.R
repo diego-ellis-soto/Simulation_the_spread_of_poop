@@ -9,7 +9,7 @@ y2 = sp@coords[2]
 mean.pars <- c(x1 = x1, y1 = y1, x2 = x2, y2 = y2, t1 = 306, dt = 21) # start on julian day 306 which is november. And say migration can take 21 days # dt 21 it takes 21 days to make the transition
 time <- 1:365; time <- 250:365 # One year
 Mean <- getMu(T = time, p.m = mean.pars)
-scan_track(time = time, x = Mean) # Tortoise migration
+# scan_track(time = time, x = Mean) # Tortoise migration
 # To simulate the complete range shift message, we need only specify the ranging parameters, which are the ranging area A and, if needed, values of the autocorrelation time scales (tau_z and tau_v).
 # Next, the mean process parameters - which must be a named vector (i.e., the order does not matter, but the names x1, x2, y1, y2, t1, dt are necessary.):
 # The getMu() function simulates the mean process, generating a two-column matrix of x and y coordinates
@@ -20,16 +20,16 @@ lowland_UD_shp$Area_sqm <- area(lowland_UD_shp); area_low = lowland_UD_shp$Area_
 highland_UD_shp$Area_sqm <- area(highland_UD_shp); area_high = highland_UD_shp$Area_sqm
 
 # MOUF.sim <- simulate_shift(T = time, tau = c(tau.z = 5, tau.v = 1), mu = Mean, A = highland_UD_shp$Area_sqm) %>% scan_track
-title("Position and Velocity Autocorrelation: MOUF", outer = TRUE)
+# title("Position and Velocity Autocorrelation: MOUF", outer = TRUE)
 # It is now quick and easy to compare models with more or less position and velocity autocorrelation TAU
 # ESTIMATION RANGE SHIFT
 MWN.sim = simulate_shift(T = time, tau = c(tau.z = 5, tau.v = 1), mu = Mean, A = highland_UD_shp$Area_sqm)
 MWN.fit <- with(MWN.sim, estimate_shift(T=MWN.sim$T, X=MWN.sim$X, Y=MWN.sim$Y))
 summary(MWN.fit)
 
-migration = data.frame(nday = MWN.fit$T[57:77], # steps where migration occurs ffrom day 306 to 330
-Longitude = MWN.fit$X[57:77],
-Latitude = MWN.fit$Y[57:77],
+migration = data.frame(nday = MWN.fit$T[57:78], # steps where migration occurs ffrom day 306 to 330
+Longitude = MWN.fit$X[57:78],
+Latitude = MWN.fit$Y[57:78],
 Poop_event = 0,
 NSeeds = 0,
 Nseeds_germinated = 0,
@@ -56,12 +56,14 @@ first_loc = SpatialPoints(migration[1,c('Longitude', 'Latitude')])
 last_loc = sp
 proj4string(first_loc) = proj
 
-mi = SpatialPoints(migration_xysp@coords)
+# mi = SpatialPoints(migration_xysp@coords)
 
 proj =   "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
 migration_xysp <- SpatialPointsDataFrame(coords= migration[,c('Longitude', 'Latitude')], data = migration,proj4string = CRS(proj))
 par(mfrow=c(1,1))
 # plot(migration_xysp$Longitude,migration_xysp$Latitude , type = 'l', add=T)
+# migration_xysp@coords
+# as.data.frame(migration_xysp)
 plot(migration_xysp)
 plot(lowland_UD_shp, col = alpha('red', 0.3) , add=T)
 plot(highland_UD_shp, col = alpha('forestgreen',0.3) , add=T)
@@ -71,10 +73,8 @@ migration_xysp %>% subset(Poop_event == 1) %>%
   points(col = 'brown', pch = 24, bg = alpha('chocolate4', 0.4 ))
 # title('Migration')
 
-plot(MWN.fit) # Note that in this visualization, the area circles are (dark to light) the 50% and 95% areas of use, whereas the dark and light blue lines in the time series figure reflect the confidence intervals around the estimated means, which are rather narrow.
+# plot(MWN.fit) # Note that in this visualization, the area circles are (dark to light) the 50% and 95% areas of use, whereas the dark and light blue lines in the time series figure reflect the confidence intervals around the estimated means, which are rather narrow.
 # EXTRACT THE COORDINATES FROM STEP 306 to 321!
-
-
 return(migration_xysp)
 }
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
