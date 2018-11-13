@@ -1,3 +1,7 @@
+# what causes migration -> cost landscape -> circuitscape -> SDM 0-1
+# cost layer and benefit being food and cost being the habitat matrix
+# cost: wetland species moving through dry area -> Landcover -> 
+# https://cran.r-project.org/web/packages/SiMRiv/SiMRiv.pdf FOR SDMs
 # git add *
   # git commit -i "Stuff"
 # Shift q :wq
@@ -11,13 +15,15 @@
 # Psidium guajava: Mean fruit weight: 59.8g and mean seeds per fruit 226. 
 # 10 seeds planted per treatment -> 80 % germinate -> 1 out of 1 makes it to shrub.
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# Next steps: 40462_2017_104_MOESM2_ESM -> Include briana abrahams code -> So that I can make walks for different type of movement (such as a trait depending whether your nomadic, etc)
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # [1] Load packages, data and scripts ####
 setwd('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Animations/')
-source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/Animate_sim.R')
+source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/Animate_sim.R') # 74935.32
 source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/similate_RW_no_migr_range.R')
 source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/simulate_migration.R')
-source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/dung_along_vegzones.R') # returns highland, low and transition distributions.
-# https://cran.r-project.org/web/packages/emojifont/vignettes/emojifont.html
+source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/dung_along_vegzones.R') # returns highland, low and transition distributions. # Also returns gut retention time distribution
+# source('/Users/diegoellis/projects/development/Simulation_the_spread_of_poop/expand_CRW_BB_LEVY.R')
 require(tidyverse)
 require(MASS)
 require(rgdal)
@@ -28,6 +34,7 @@ require(move)
 require(lubridate)
 require(raster)
 require(reshape)
+# https://cran.r-project.org/web/packages/emojifont/vignettes/emojifont.html
 lowland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/LR_Lowland.shp')
 highland_UD_shp <- readOGR('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/Seasonal_UD/Highland_polygon_final_basedon90UD.shp')
 SRTM <- raster('/Users/diegoellis/Dropbox/Marius_Galapagos/Inputs/RS_Data_Santa_Cruz/SRTM/SRTM_Santa_Cruz.tif')
@@ -36,25 +43,25 @@ load('/Users/diegoellis/projects/Yale_Classes/Quant_Methods_EEB/Project/Data/1km
 lowland_UD_shp= spTransform(lowland_UD_shp,   "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs" )
 highland_UD_shp = spTransform(highland_UD_shp, proj4string(lowland_UD_shp))
 SRTM = projectRaster(SRTM, crs = proj4string(highland_UD_shp))
-range_shp = lowland_UD_shp
+range_shp = highland_UD_shp
 ndays = 150; daily_distance_moved = 200; avg_gut_retention_time = 8; guava_seed_per_dung_pile = 624; germinatioN_success = 0.8;seedling_to_shrub = 1/1000 # one out of every 1000 seedlings becomes a shrub  
 # We could also use the entire seed dataset take the mean and the standard deviation.
 # y <- dnorm(x, mean=10, sd=3)
 
   # [2] Simulate highland movement ####
 # Parameters are 150 days we simulate, move 200 meters per day, simulate the highland range, average gut retention time is 8 days
-steps.df = rw_within_homerange(150, 200, highland_UD_shp, 8)
+steps.df = rw_within_homerange(150, 200, highland_UD_shp,  8, 'random_walk')
+steps.df = rw_within_homerange(150, 200, highland_UD_shp, 8 , 'levy_walk')
 # [3] Simulate migration ####
-
 # SOMETHING IS WRONG WITH THE WAY I GET THE POINTS! #####
-migration = simulate_migration(steps.df, highland_UD_shp, lowland_UD_shp, 8) # Add colour first and last point!
+migration = simulate_migration(steps.df, highland_UD_shp, lowland_UD_shp, 8, 21, 'marcher') # Add colour first and last point!
+migration = simulate_migration(steps.df, highland_UD_shp, lowland_UD_shp, 8, 21, 'brownian_bridge')
 defined_start_point = tail(migration,1)
 proj =   "+proj=utm +zone=15 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
 defined_start_point = SpatialPoints(defined_start_point[,c('Longitude', 'Latitude')])
 proj4string(defined_start_point) = proj
 plot(lowland_UD_shp)
 points(defined_start_point, col = 'blue', pch = 16)
-# 
 
 if(!gIntersects(defined_start_point, lowland_UD_shp)){
   message('Does not intersect')
@@ -75,22 +82,18 @@ if(!gIntersects(defined_start_point, lowland_UD_shp)){
   closest_to_last_point = df_tmp[df_tmp$distance ==  min(df_tmp$distance),] 
   closest_to_last_point = SpatialPoints(closest_to_last_point[,c('Longitude', 'Latitude')], proj4string = CRS(proj))
   defined_start_point = closest_to_last_point
-  # 
   # gDistance(defined_start_point, lowland_UD_shp_df)
   # d <- gDistance(sp.mydata, byid=T)
-
 }
-
 plot(lowland_UD_shp)
 points(defined_start_point, col = 'blue', pch = 16)
   # lowland_UD_shp_df = SpatialPoints(lowland_UD_shp_df[,c('long', 'lat')])
   # proj4string(lowland_UD_shp_df) = proj
   # 
   # lowland_UD_shp_df$nearest <- apply(gDistance(defined_start_point, lowland_UD_shp_df, byid=TRUE), 1, which.min)
-  
-  
 # [4] Simulate lowland movement ####
-steps.df_lowland = rw_within_homerange(150, 200, lowland_UD_shp, 8, defined_start_point)
+steps.df_lowland = rw_within_homerange(150, 200, lowland_UD_shp, 8, 'random_walk', defined_start_point)
+steps.df_lowland = rw_within_homerange(150, 200, lowland_UD_shp, 8, 'levy_walk', defined_start_point)
 # [5] Combine all three datasets" ####
 migration = migration[,-1] # remove ndays column
 migration = as.data.frame(migration)
@@ -98,6 +101,11 @@ migration = migration[,c(1:6)]
 migration$Type = 'Migration'
 steps.df$Type = 'Highland'
 steps.df_lowland$Type = 'Lowland'
+names(steps.df_lowland)
+names(steps.df)[4] <- 'NSeeds'
+names(steps.df) ==  names(migration)
+names(steps.df) ==  names(steps.df_lowland)
+names(migration) ==  names(steps.df_lowland)
 anual_track = rbind(steps.df, migration, steps.df_lowland)
 # anual_track = melt(steps.df, migration, steps.df_lowland, id.vars = 'Type')
 message(paste0('We found a total of ', nrow(anual_track[anual_track$Poop_event == 1,])), ' poop event')

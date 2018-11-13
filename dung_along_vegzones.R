@@ -33,3 +33,10 @@ low = unlist(distr_of_seeds_along_veg_zone[1])
 transition = unlist(distr_of_seeds_along_veg_zone[2])
 highland = unlist(distr_of_seeds_along_veg_zone[3])
 rm(distr_of_seeds_along_veg_zone, veg_zone_seeds, caca_psidium, caca)
+#  Median retention time varied from 6 to 28 days, with a mode of 12 days # From Sadeghayobi et al. 2011
+gut_ret_time_dry_season =  rtruncnorm(n=100, a=0,  mean = 12.7, sd = 2.75) # Alvaro what sample size do I choose? # Hot: Take longer to poop
+gut_ret_time_cool_season =  rtruncnorm(n=100, a=0,  mean = 7.5, sd = 2.16) # Alvaro what sample size do I choose?
+population_numbers = 4000 # > 3500
+# 
+# mean = 12.7 sd = 2.75 # assuming 23.3 degrees celcsius # taken from sadegayobi et al. 2011
+# hot season mean = 7.5  sd = 2.16 # assuming 281. degrees average # taken from sadegayobi et al. 2011
